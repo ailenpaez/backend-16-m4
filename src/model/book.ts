@@ -1,9 +1,6 @@
 // Una vez completadas las funciones, convertilas en métodos estaticos de la clase Book.
 
 import DB from "../database/books.json"
-import { writeFileSync } from "node:fs"
-import { randomUUID } from "node:crypto"
-
 const PATH = "./src/database/books.json"
 
 interface BookData {
@@ -23,10 +20,10 @@ class Book {
     this.name = name
     this.released = released
     this.author = author
-    this.id = this.#createUUID()
+    this.id = this.createUUID()
   }
 
-  #createUUID(): string {
+  private createUUID(): string {
     return randomUUID()
   }
 
@@ -52,4 +49,4 @@ class Book {
   }
 }
 console.log("hola")
-export {} // Exportá los métodos estaticos
+export { } // Exportá los métodos estaticos
