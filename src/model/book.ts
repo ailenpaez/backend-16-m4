@@ -1,52 +1,58 @@
 // Una vez completadas las funciones, convertilas en métodos estaticos de la clase Book.
-
-import DB from "../database/books.json"
-const PATH = "./src/database/books.json"
+import uuid from "uuid";
+import { randomUUID } from "crypto";
+import { readFile, writeFile } from "./db";
+import { read } from "fs";
 
 interface BookData {
-  name: string
-  released: string
-  author: string
+  name: string;
+  released: string;
+  author: string;
 }
 
 class Book {
-  name
-  released
-  author
-  id
+  static PATH = "./src/database/books.json";
+  name;
+  released;
+  author;
+  id;
 
   constructor(book: BookData) {
-    const { name, released, author } = book
-    this.name = name
-    this.released = released
-    this.author = author
-    this.id = this.createUUID()
+    const { name, released, author } = book;
+    this.name = name;
+    this.released = released;
+    this.author = author;
+    this.id = Book.createUUID();
   }
 
-  private createUUID(): string {
-    return randomUUID()
+  private static createUUID(): string {
+    return uuid.v4();
   }
 
   getAge() {
-    const date = new Date()
-    const currentYear = date.getFullYear()
-    const releasedDate = Number(this.released)
+    const date = new Date();
+    const currentYear = date.getFullYear();
+    const releasedDate = Number(this.released);
 
-    return currentYear - releasedDate
+    return currentYear - releasedDate;
   }
   static findBookByTitle(title: string) {
-    return DB.find((book) => book.name.includes(title))
+    const books = readFile();
+    const foundBook = books.find((book) => book.name === title);
+
+    if (!foundBook) {
+      return "BOOK_NOT_FOUND";
+    }
+    return foundBook;
   }
 
   static uploadNewBook(book: Book): boolean {
-    const isBookOnDB = this.findBookByTitle(book.name)
-
-    isBookOnDB ? false : DB.push(book)
-    const stringifiedDB = JSON.stringify(DB)
-    writeFileSync(PATH, stringifiedDB)
-
-    return true
+    const isBookOnDB = Book.findBookByTitle(book.name);
+    const books = readFile()
+    typeof isBookOnDB != "string" ? false : books.push(book);
+    writeFile(books)
+    return true;
   }
 }
-console.log("hola")
-export { } // Exportá los métodos estaticos
+console.log("hola");
+export {}; // Exportá los métodos estaticos
